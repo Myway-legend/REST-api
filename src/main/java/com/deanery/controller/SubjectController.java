@@ -25,7 +25,6 @@ public class SubjectController {
     @GetMapping(path = "/all")
     @ResponseBody
     public ResponseEntity<List<Subject>> getSubjects(@RequestParam(required = false) Optional<String> prefix) {
-
         return prefix.isPresent() ?
                 new ResponseEntity<>(subjectService.readSubjectsStartsWith(prefix.get()), HttpStatus.OK) :
                 new ResponseEntity<>(subjectService.readSubjects(), HttpStatus.OK);
@@ -33,8 +32,7 @@ public class SubjectController {
 
     @GetMapping(path = "/all-ordered")
     @ResponseBody
-    public ResponseEntity<List<Subject>> getSubjectsOrdered(@RequestParam(required = false) Optional<Object> asc) {
-
+    public ResponseEntity<List<Subject>> getSubjectsOrdered(@RequestParam(required = false) Optional<?> asc) {
         return asc.isPresent() ?
                 new ResponseEntity<>(subjectService.readSubjectsOrdered(true), HttpStatus.OK) :
                 new ResponseEntity<>(subjectService.readSubjectsOrdered(false), HttpStatus.OK);
@@ -61,31 +59,40 @@ public class SubjectController {
     }
 
     @PostMapping
-    public void postSubject(@RequestBody Subject subject) {
+    public ResponseEntity<?> postSubject(@RequestBody Subject subject) {
         try {
             subjectService.createSubject(subject.getName());
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.FOUND, "Subject already exists");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid subject name");
         }
-
     }
 
     @DeleteMapping
-    public void deleteSubject(@RequestParam(required = false) Optional<Long> id) {
-
+    public ResponseEntity<?> deleteSubject(@RequestParam(required = false) Optional<Long> id) {
         try {
             if (id.isPresent()) {
                 subjectService.deleteSubjectById(id.get());
             } else {
                 subjectService.deleteAllSubjects();
             }
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found");
         }
     }
 
     @PutMapping
-    public void putSubject(@RequestParam Long id, @RequestParam String newName) {
-        subjectService.updateSubjectById(id, newName);
+    public ResponseEntity<?> putSubject(@RequestParam Long id, @RequestParam String newName) {
+        try {
+            subjectService.updateSubjectById(id, newName);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "Invalid subject name");
+        }
     }
 }

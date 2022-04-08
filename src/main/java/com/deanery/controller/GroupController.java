@@ -1,9 +1,13 @@
 package com.deanery.controller;
 
 import com.deanery.entity.Group;
+import com.deanery.entity.Subject;
 import com.deanery.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,37 +25,70 @@ public class GroupController {
 
     @GetMapping(path = "/all")
     @ResponseBody
-    public List<Group> getGroups(@RequestParam(required = false) Optional<String> prefix) {
-        return prefix.isPresent() ? groupService.readGroupsStartsWith(prefix.get()) : groupService.readGroups();
+    public ResponseEntity<List<Group>> getGroups(@RequestParam(required = false) Optional<String> prefix) {
+        return prefix.isPresent() ?
+                new ResponseEntity<>(groupService.readGroupsStartsWith(prefix.get()), HttpStatus.OK) :
+                new ResponseEntity<>(groupService.readGroups(), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/all-ordered")
+    public ResponseEntity<List<Group>> getGroupsOrdered(@RequestParam(required = false) Optional<?> asc) {
+        return asc.isPresent() ?
+                new ResponseEntity<>(groupService.readGroupsOrdered(true), HttpStatus.OK) :
+                new ResponseEntity<>(groupService.readGroupsOrdered(false), HttpStatus.OK);
     }
 
     @GetMapping
     @ResponseBody
-    public Group getGroup(@RequestParam Long id) {
-        return groupService.readGroupById(id);
+    public ResponseEntity<Group> getGroup(@RequestParam Long id) {
+        try {
+            return new ResponseEntity<>(groupService.readGroupById(id), HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
+        }
     }
 
     @PostMapping
-    public void postGroup(@RequestBody Group group) {
-        groupService.createGroup(group.getName());
+    public ResponseEntity<?> postGroup(@RequestBody Group group) {
+        try {
+            groupService.createGroup(group.getName());
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.FOUND, "Group already exists");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Invalid group name");
+        }
     }
 
     @DeleteMapping(path = "/all")
-    public void deleteGroups(@RequestParam(required = false) Optional<String> prefix) {
+    public ResponseEntity<?> deleteGroups(@RequestParam(required = false) Optional<String> prefix) {
         if (prefix.isPresent()) {
             groupService.deleteGroupsStartsWith(prefix.get());
         } else {
             groupService.deleteAllGroups();
         }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping
-    public void deleteGroup(@RequestParam Long id) {
-        groupService.deleteGroupById(id);
+    public ResponseEntity<?> deleteGroup(@RequestParam Long id) {
+        try {
+            groupService.deleteGroupById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
+        }
     }
 
     @PutMapping
-    public void putGroup(@RequestParam Long id, @RequestParam String newName) {
-        groupService.updateGroupById(id, newName);
+    public ResponseEntity<?> putGroup(@RequestParam Long id, @RequestParam String newName) {
+        try {
+            groupService.updateGroupById(id, newName);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalStateException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_MODIFIED, "Invalid group name");
+        }
     }
 }
