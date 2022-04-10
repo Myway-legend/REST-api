@@ -1,7 +1,6 @@
 package com.deanery.controller;
 
 import com.deanery.entity.Group;
-import com.deanery.entity.Subject;
 import com.deanery.service.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -81,9 +80,9 @@ public class GroupController {
     }
 
     @PutMapping
-    public ResponseEntity<?> putGroup(@RequestParam Long id, @RequestParam String newName) {
+    public ResponseEntity<?> putGroup(@RequestBody Group newGroup) {
         try {
-            groupService.updateGroupById(id, newName);
+            groupService.updateGroupById(newGroup.getId(), newGroup.getName());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");

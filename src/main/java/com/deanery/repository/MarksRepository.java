@@ -37,6 +37,11 @@ public interface MarksRepository extends CrudRepository<Mark, Long> {
 
     @Transactional
     @Modifying
+    @Query("DELETE FROM MARKS m WHERE m.teacherId = ?1")
+    void deleteMarksByTeacherId(Person teacherId);
+
+    @Transactional
+    @Modifying
     @Query("DELETE FROM MARKS m WHERE m.subjectId = ?1")
     void deleteAllBySubjectId(Subject subjectId);
 }

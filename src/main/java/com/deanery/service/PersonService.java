@@ -10,11 +10,12 @@ public interface PersonService {
     List<Person> readPeople();
     List<Person> readPeopleOrdered(Boolean asc);
     List<Person> readStudentsBySubject(Long subjectId);
+    List<Person> readStudentsByTeacher(Long teacherId) throws IllegalArgumentException;
     List<Person> readTeachersBySubject(Long subjectId);
+
     List<Person> readAdditionalSessionStudents();
     List<Person> readTeachers();
     List<Person> readStudents();
-    List<Person> readStudentsByTeacher(Long teacherId) throws IllegalStateException;
     List<Person> readPeopleByGroups();
     Person readPersonById(Long id) throws IllegalStateException;
 
@@ -24,7 +25,7 @@ public interface PersonService {
 
     // DELETE
     void deleteAllPeople();
-    void deletePeopleByGroup(Long groupId);
+    void deletePeopleByGroup(Long groupId) throws IllegalStateException;
     void deletePersonById(Long id) throws IllegalStateException;
 
     // UPDATE

@@ -36,7 +36,7 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public List<Mark> readStudentMarks(Long studentId) throws IllegalStateException {
+    public List<Mark> readMarksByStudentId(Long studentId) throws IllegalStateException {
         return marksRepository.findMarksByStudentId(personService.readPersonById(studentId));
     }
 
@@ -70,14 +70,24 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public void deleteStudentMarks(Long studentId) throws IllegalStateException, IllegalArgumentException {
+    public void deleteMarksByStudentId(Long studentId) throws IllegalStateException, IllegalArgumentException {
 
         Person student = personService.readPersonById(studentId);
         if (student.getType() != 'S') {
-            throw new IllegalArgumentException("Invalid people");
+            throw new IllegalArgumentException("Invalid person");
         }
 
         marksRepository.deleteMarksByStudentId(student);
+    }
+
+    @Override
+    public void deleteMarksByTeacherId(Long teacherId) throws IllegalStateException, IllegalArgumentException {
+        Person teacher = personService.readPersonById(teacherId);
+        if (teacher.getType() != 'P') {
+            throw new IllegalArgumentException("Invalid person");
+        }
+
+        marksRepository.deleteMarksByTeacherId(teacher);
     }
 
     @Override

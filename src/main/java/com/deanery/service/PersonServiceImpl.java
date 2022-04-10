@@ -65,10 +65,10 @@ public class PersonServiceImpl implements PersonService{
     }
 
     @Override
-    public List<Person> readStudentsByTeacher(Long teacherId) throws IllegalStateException {
+    public List<Person> readStudentsByTeacher(Long teacherId) throws IllegalArgumentException {
         Optional<Person> teacher = peopleRepository.findById(teacherId);
         if (teacher.isEmpty() || teacher.get().getType() == 'S') {
-            throw new IllegalStateException("Invalid teacherId");
+            throw new IllegalArgumentException("Invalid teacherId");
         }
         return peopleRepository.findByTeacher(teacherId);
     }
@@ -107,7 +107,7 @@ public class PersonServiceImpl implements PersonService{
     }
 
     @Override
-    public void deletePeopleByGroup(Long groupId) {
+    public void deletePeopleByGroup(Long groupId) throws IllegalStateException {
         peopleRepository.deleteByGroupId(groupService.readGroupById(groupId));
     }
 

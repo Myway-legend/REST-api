@@ -71,7 +71,7 @@ public class SubjectController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteSubject(@RequestParam(required = false) Optional<Long> id) {
+    public ResponseEntity<?> deleteSubjects(@RequestParam(required = false) Optional<Long> id) {
         try {
             if (id.isPresent()) {
                 subjectService.deleteSubjectById(id.get());
@@ -85,9 +85,9 @@ public class SubjectController {
     }
 
     @PutMapping
-    public ResponseEntity<?> putSubject(@RequestParam Long id, @RequestParam String newName) {
+    public ResponseEntity<?> putSubject(@RequestBody Subject newSubject) {
         try {
-            subjectService.updateSubjectById(id, newName);
+            subjectService.updateSubjectById(newSubject.getId(), newSubject.getName());
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (IllegalStateException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Subject not found");

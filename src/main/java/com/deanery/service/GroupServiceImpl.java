@@ -2,7 +2,6 @@ package com.deanery.service;
 
 import com.deanery.entity.Group;
 import com.deanery.repository.GroupsRepository;
-import com.deanery.repository.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
