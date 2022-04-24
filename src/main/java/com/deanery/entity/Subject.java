@@ -3,6 +3,7 @@ package com.deanery.entity;
 import lombok.*;
 
 import javax.persistence.*;
+
 @Getter
 @Setter
 @ToString
@@ -19,8 +20,7 @@ public class Subject {
                     generator = "subject_sequence")
     @Column(name = "ID",
             nullable = false,
-            unique = true,
-            updatable = false)
+            unique = true)
     private Long id;
 
     @Column(name = "NAME",

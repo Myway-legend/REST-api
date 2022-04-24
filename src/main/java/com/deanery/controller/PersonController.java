@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/deanery-api/people")
+@RequestMapping(path = "/deanery-api/data/people")
 public class PersonController {
 
     PersonService personService;

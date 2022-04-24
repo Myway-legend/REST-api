@@ -21,8 +21,7 @@ public class Group {
                     generator = "group_sequence")
     @Column(name = "ID",
             nullable = false,
-            updatable = false,
-            unique = true)
+            updatable = false)
     private Long id;
 
     @Column(name = "NAME",

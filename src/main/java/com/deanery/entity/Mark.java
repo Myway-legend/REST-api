@@ -17,8 +17,7 @@ public class Mark {
                     generator = "mark_sequence")
     @Column(name = "ID",
             nullable = false,
-            updatable = false,
-            unique = true)
+            updatable = false)
     private Long id;
 
     @ManyToOne(cascade = { CascadeType.MERGE, CascadeType.REFRESH },

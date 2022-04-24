@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/deanery-api/groups")
+@RequestMapping(path = "/deanery-api/data/groups")
 public class GroupController {
     
     GroupService groupService;

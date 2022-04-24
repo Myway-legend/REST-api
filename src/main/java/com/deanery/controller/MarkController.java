@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/deanery-api/marks")
+@RequestMapping(path = "/deanery-api/data/marks")
 public class MarkController {
 
     MarkService markService;

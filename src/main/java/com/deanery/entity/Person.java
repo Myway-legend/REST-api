@@ -17,8 +17,7 @@ public class Person {
                     generator = "person_sequence")
     @Column(name = "ID",
             nullable = false,
-            unique = true,
-            updatable = false)
+            unique = true)
     private Long id;
 
     @Column(name = "FIRST_NAME",
