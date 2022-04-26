@@ -12,6 +12,7 @@ public interface SubjectService {
     List<Subject> readSubjectsOrdered(Boolean asc);
     List<Subject> readSubjectsByTeacher(Long teacherId) throws IllegalStateException;
     Subject readSubjectById(Long id) throws IllegalStateException;
+    Subject readSubjectByName(String name) throws IllegalStateException;
 
     // CREATE
     void createSubject(String name) throws IllegalStateException, IllegalArgumentException;

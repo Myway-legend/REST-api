@@ -7,11 +7,15 @@ import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface SubjectsRepository extends CrudRepository<Subject, Long> {
 
     @Query("SELECT (COUNT(s) > 0) FROM SUBJECTS s WHERE s.name = ?1")
     boolean existsByName(String name);
+
+    @Query("SELECT s FROM SUBJECTS s WHERE s.name = ?1")
+    Optional<Subject> findByName(String name);
 
     @Query("SELECT s FROM SUBJECTS s WHERE s.name LIKE CONCAT(?1, '%')")
     List<Subject> findByNameStartsWith(String prefix);

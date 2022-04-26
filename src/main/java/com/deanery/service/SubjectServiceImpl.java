@@ -53,6 +53,13 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public Subject readSubjectByName(String name) throws IllegalStateException {
+        return subjectsRepository.findByName(name).orElseThrow(
+                () -> new IllegalStateException("Invalid subject name")
+        );
+    }
+
+    @Override
     public void createSubject(String name) throws IllegalStateException, IllegalArgumentException {
         if (subjectsRepository.existsByName(name)) {
             throw new IllegalStateException("Subject already exists");
