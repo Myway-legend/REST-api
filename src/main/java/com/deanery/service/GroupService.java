@@ -10,9 +10,10 @@ public interface GroupService {
     List<Group> readGroupsStartsWith(String prefix);
     List<Group> readGroupsOrdered(Boolean asc);
     Group readGroupById(Long id) throws IllegalStateException;
+    Group readGroupByName(String name) throws IllegalStateException;
 
     // CREATE
-    void createGroup(String name) throws IllegalStateException, IllegalArgumentException;
+    void createGroup(String name) throws IllegalStateException;
 
     // DELETE
     void deleteAllGroups();
@@ -20,5 +21,5 @@ public interface GroupService {
     void deleteGroupById(Long id) throws IllegalStateException;
 
     // UPDATE
-    void updateGroupById(Long id, String name) throws IllegalStateException, IllegalArgumentException;
+    void updateGroupById(Long id, String name) throws IllegalStateException;
 }

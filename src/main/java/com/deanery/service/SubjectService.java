@@ -15,12 +15,12 @@ public interface SubjectService {
     Subject readSubjectByName(String name) throws IllegalStateException;
 
     // CREATE
-    void createSubject(String name) throws IllegalStateException, IllegalArgumentException;
+    void createSubject(String name) throws IllegalStateException;
 
     // DELETE
     void deleteAllSubjects();
     void deleteSubjectById(Long id) throws IllegalStateException;
 
     // UPDATE
-    void updateSubjectById(Long id, String newName) throws IllegalStateException, IllegalArgumentException;
+    void updateSubjectById(Long id, String newName) throws IllegalStateException;
 }

@@ -39,10 +39,22 @@ public class TestDataInit implements CommandLineRunner {
         subjectService.deleteAllSubjects();
 
         customUserDetailsService.createUser("Admin", pwdEncoder.encode("Admin"), Collections.singletonList("ROLE_ADMIN"));
-        groupService.createGroup("3530904/00005");
+        groupService.createGroup("3530904/00001");
+        groupService.createGroup("3530904/00002");
+        groupService.createGroup("3530904/00003");
         subjectService.createSubject("Programming");
-        personService.createPerson("Konstantine", "Samoilenko", "Igorevich", 1L, 'S');
-        personService.createPerson("Vasya", "Pupkin", "Ignatievich", null, 'P');
-        markService.createMark(1L, 1L, 2L, 5);
+        subjectService.createSubject("Math");
+        subjectService.createSubject("History");
+        personService.createPerson("Konstantine", "Samoilenko", "Igorevich", 1L, "S");
+        personService.createPerson("Oleg", "Olegov", "Olegovich", 2L, "S");
+        personService.createPerson("Igor", "Igorev", "Igorevich", 3L, "S");
+        personService.createPerson("Vasya", "Pupkin", "Ignatievich", null, "P");
+        personService.createPerson("Innokentiy", "Popov", "Artemovich", null, "P");
+        markService.createMark(1L, 1L, 4L, "5");
+        markService.createMark(1L, 2L, 4L, "5");
+        markService.createMark(1L, 3L, 5L, "5");
+        markService.createMark(2L, 1L, 4L, "2");
+        markService.createMark(2L, 2L, 4L, "2");
+        markService.createMark(3L, 3L, 5L, "5");
     }
 }

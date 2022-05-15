@@ -9,14 +9,18 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MarksRepository extends CrudRepository<Mark, Long> {
 
     @Query("SELECT (COUNT(m) > 0) FROM MARKS m WHERE m.studentId = ?1 AND m.value = ?2")
-    boolean existsByStudentIdAndValue(Person studentId, Integer value);
+    boolean existsByStudentIdAndValue(Person studentId, String value);
 
     @Query("SELECT (COUNT(m) > 0) FROM MARKS m WHERE m.studentId = ?1 AND m.subjectId = ?2")
     boolean existsByStudentIdAndSubjectId(Person studentId, Subject subjectId);
+
+    @Query("SELECT m FROM MARKS m WHERE m.studentId = ?1 AND m.subjectId = ?2 AND m.teacherId = ?3")
+    Optional<Mark> findByStudentIdAndSubjectIdAndTeacherId(Person studentId, Subject subjectId, Person teacherId);
 
     @Query("SELECT m FROM MARKS m ORDER BY m.value")
     List<Mark> orderByValue();

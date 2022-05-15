@@ -1,5 +1,6 @@
 package com.deanery.service;
 
+import com.deanery.entity.Group;
 import com.deanery.entity.Person;
 import com.deanery.repository.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class PersonServiceImpl implements PersonService{
     }
 
     @Override
+    public List<Person> readPeopleLastNameStartsWith(String prefix) {
+        return peopleRepository.findByLastNameStartsWith(prefix);
+    }
+
+    @Override
     public List<Person> readStudentsBySubject(Long subjectId) throws IllegalStateException {
         return peopleRepository.findStudentsBySubject(subjectService.readSubjectById(subjectId).getId());
     }
@@ -67,7 +73,7 @@ public class PersonServiceImpl implements PersonService{
     @Override
     public List<Person> readStudentsByTeacher(Long teacherId) throws IllegalArgumentException {
         Optional<Person> teacher = peopleRepository.findById(teacherId);
-        if (teacher.isEmpty() || teacher.get().getType() == 'S') {
+        if (teacher.isEmpty() || teacher.get().getType().equals("S")) {
             throw new IllegalArgumentException("Invalid teacherId");
         }
         return peopleRepository.findByTeacher(teacherId);
@@ -85,7 +91,20 @@ public class PersonServiceImpl implements PersonService{
     }
 
     @Override
-    public void createPerson(String firstName, String lastName, String patherName, Long groupId, Character type)
+    public Person readPersonByEverything(String firstName, String lastName,
+                                         String patherName, Long groupId,
+                                         String type) throws IllegalStateException {
+        return peopleRepository.findByFirstNameAndLastNameAndPatherNameAndGroupIdAndType(
+                firstName,
+                lastName,
+                patherName,
+                groupService.readGroupById(groupId),
+                type
+        ).orElseThrow(() -> new IllegalStateException("Invalid person data"));
+    }
+
+    @Override
+    public void createPerson(String firstName, String lastName, String patherName, Long groupId, String type)
             throws IllegalArgumentException {
 
         Person person;
@@ -94,9 +113,6 @@ public class PersonServiceImpl implements PersonService{
             person = new Person(firstName, lastName, patherName, null, type);
         } else {
             person = new Person(firstName, lastName, patherName, groupService.readGroupById(groupId), type);
-        }
-        if (!isPersonValid(person)) {
-            throw new IllegalArgumentException("Invalid person data");
         }
         peopleRepository.save(person);
     }
@@ -120,30 +136,21 @@ public class PersonServiceImpl implements PersonService{
 
     @Override
     public void updatePersonById(Long id, String firstName,
-                                 String lastName, String patherName, Long groupId, Character type)
-            throws IllegalStateException, IllegalArgumentException {
+                                 String lastName, String patherName, Long groupId, String type)
+            throws IllegalStateException {
 
         Person person = peopleRepository.findById(id).orElseThrow(
                 () -> new IllegalStateException("Invalid person ID"));
 
         if (firstName != null) {
-            if (!isEnglishName(firstName)) {
-                throw new IllegalArgumentException("Invalid person firstName");
-            }
             person.setFirstName(firstName);
             peopleRepository.save(person);
         }
         if (lastName != null) {
-            if (!isEnglishName(lastName)) {
-                throw new IllegalArgumentException("Invalid person lastName");
-            }
             person.setLastName(lastName);
             peopleRepository.save(person);
         }
         if (patherName != null) {
-            if (!isEnglishName(patherName)) {
-                throw new IllegalArgumentException("Invalid person patherName");
-            }
             person.setPatherName(patherName);
             peopleRepository.save(person);
         }
@@ -152,29 +159,9 @@ public class PersonServiceImpl implements PersonService{
             peopleRepository.save(person);
         }
         if (type != null) {
-            if (!isTypeValid(type)) {
-                throw new IllegalArgumentException("Invalid person type");
-            }
             person.setType(type);
             peopleRepository.save(person);
         }
-    }
-
-    private boolean isPersonValid(Person person) {
-        if (isEnglishName(person.getFirstName()) && isEnglishName(person.getLastName())) {
-            if (isEnglishName(person.getPatherName()) || person.getPatherName() == null) {
-                return isTypeValid(person.getType());
-            }
-        }
-        return false;
-    }
-
-    private boolean isEnglishName(String name) {
-        return name.matches("[A-Z][a-z]{0,19}");
-    }
-
-    private boolean isTypeValid(Character type) {
-        return type == 'S' || type == 'P';
     }
 
 }

@@ -40,9 +40,9 @@ public class Mark {
 
     @Column(name = "VALUE",
             nullable = false)
-    private Integer value;
+    private String value;
 
-    public Mark(Person studentId, Subject subjectId, Person teacherId, Integer value) {
+    public Mark(Person studentId, Subject subjectId, Person teacherId, String value) {
         this.studentId = studentId;
         this.subjectId = subjectId;
         this.teacherId = teacherId;

@@ -11,9 +11,10 @@ public interface MarkService {
     List<Mark> readMarksOrdered(Boolean asc);
     List<Mark> readMarksByStudentId(Long studentId) throws IllegalStateException;
     Mark readMarkById(Long id) throws IllegalStateException;
+    Mark readMarkByEverything(Long studentId, Long subjectId, Long teacherId) throws IllegalStateException;
 
     // CREATE
-    void createMark(Long studentId, Long subjectId, Long teacherId, Integer value)
+    void createMark(Long studentId, Long subjectId, Long teacherId, String value)
             throws IllegalStateException, IllegalArgumentException;
 
     // DELETE
@@ -24,7 +25,7 @@ public interface MarkService {
     void deleteMarkById(Long id) throws IllegalStateException;
 
     // UPDATE
-    void updateMarkById(Long id, Long studentId, Long subjectId, Long teacherId, Integer value)
+    void updateMarkById(Long id, Long studentId, Long subjectId, Long teacherId, String value)
             throws IllegalStateException, IllegalArgumentException;
 
 }

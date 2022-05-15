@@ -8,11 +8,14 @@ import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 public interface GroupsRepository extends CrudRepository<Group, Long> {
 
     @Query("SELECT (COUNT(g) > 0) FROM GROUPS g WHERE g.name = ?1")
     boolean existsByName(String name);
+    @Query("SELECT g FROM GROUPS g WHERE g.name = ?1")
+    Optional<Group> findByName(String name);
 
     @Query("SELECT g FROM GROUPS g WHERE g.name LIKE CONCAT(?1, '%')")
     List<Group> findByNameStartsWith(String prefix);

@@ -1,5 +1,6 @@
 package com.deanery.service;
 
+import com.deanery.entity.Group;
 import com.deanery.entity.Person;
 
 import java.util.List;
@@ -9,19 +10,22 @@ public interface PersonService {
     // READ
     List<Person> readPeople();
     List<Person> readPeopleOrdered(Boolean asc);
+    List<Person> readPeopleLastNameStartsWith(String prefix);
     List<Person> readStudentsBySubject(Long subjectId);
     List<Person> readStudentsByTeacher(Long teacherId) throws IllegalArgumentException;
     List<Person> readTeachersBySubject(Long subjectId);
-
     List<Person> readAdditionalSessionStudents();
     List<Person> readTeachers();
     List<Person> readStudents();
     List<Person> readPeopleByGroups();
     Person readPersonById(Long id) throws IllegalStateException;
+    Person readPersonByEverything(String firstName, String lastName,
+                                  String patherName, Long groupId,
+                                  String type) throws IllegalStateException;
 
     // CREATE
-    void createPerson(String firstName, String lastName, String patherName, Long groupId, Character type)
-            throws IllegalStateException, IllegalArgumentException;
+    void createPerson(String firstName, String lastName, String patherName, Long groupId, String type)
+            throws IllegalStateException;
 
     // DELETE
     void deleteAllPeople();
@@ -30,6 +34,6 @@ public interface PersonService {
 
     // UPDATE
     void updatePersonById(Long id, String firstName, String lastName,
-                          String patherName, Long groupId, Character type)
-            throws IllegalStateException, IllegalArgumentException;
+                          String patherName, Long groupId, String type)
+            throws IllegalStateException;
 }

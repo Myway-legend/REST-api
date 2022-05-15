@@ -40,9 +40,9 @@ public class Person {
 
     @Column(name = "TYPE",
             nullable = false)
-    private Character type;
+    private String type;
 
-    public Person(String firstName, String lastName, String patherName, Group groupId, Character type) {
+    public Person(String firstName, String lastName, String patherName, Group groupId, String type) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.patherName = patherName;

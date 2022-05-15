@@ -47,18 +47,17 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public void createMark(Long studentId, Long subjectId, Long teacherId, Integer value)
-            throws IllegalStateException, IllegalArgumentException {
+    public Mark readMarkByEverything(Long studentId, Long subjectId, Long teacherId) throws IllegalStateException {
+        return marksRepository.findByStudentIdAndSubjectIdAndTeacherId(
+                personService.readPersonById(studentId),
+                subjectService.readSubjectById(subjectId),
+                personService.readPersonById(teacherId)
+        ).orElseThrow(() -> new IllegalStateException("Invalid mark data"));
+    }
 
-        Person student = personService.readPersonById(studentId);
-        Person teacher = personService.readPersonById(teacherId);
-
-        if (student.getType() != 'S' || teacher.getType() != 'P') {
-            throw new IllegalArgumentException("Invalid people");
-        }
-        if (isValueInvalid(value)) {
-            throw new IllegalArgumentException("Invalid mark value");
-        }
+    @Override
+    public void createMark(Long studentId, Long subjectId, Long teacherId, String value)
+            throws IllegalStateException {
 
         marksRepository.save(new Mark(personService.readPersonById(studentId), subjectService.readSubjectById(subjectId),
                 personService.readPersonById(teacherId), value));
@@ -73,7 +72,7 @@ public class MarkServiceImpl implements MarkService {
     public void deleteMarksByStudentId(Long studentId) throws IllegalStateException, IllegalArgumentException {
 
         Person student = personService.readPersonById(studentId);
-        if (student.getType() != 'S') {
+        if (!student.getType().equals("S")) {
             throw new IllegalArgumentException("Invalid person");
         }
 
@@ -83,7 +82,7 @@ public class MarkServiceImpl implements MarkService {
     @Override
     public void deleteMarksByTeacherId(Long teacherId) throws IllegalStateException, IllegalArgumentException {
         Person teacher = personService.readPersonById(teacherId);
-        if (teacher.getType() != 'P') {
+        if (!teacher.getType().equals("P")) {
             throw new IllegalArgumentException("Invalid person");
         }
 
@@ -102,55 +101,27 @@ public class MarkServiceImpl implements MarkService {
     }
 
     @Override
-    public void updateMarkById(Long id, Long studentId, Long subjectId, Long teacherId, Integer value)
-            throws IllegalStateException, IllegalArgumentException {
+    public void updateMarkById(Long id, Long studentId, Long subjectId, Long teacherId, String value)
+            throws IllegalStateException {
 
         Mark mark = marksRepository.findById(id).orElseThrow(
                 () -> new IllegalStateException("Invalid mark ID"));
 
         if (studentId != null) {
-            if (isStudentInvalid(studentId)) {
-                throw new IllegalArgumentException("Invalid mark studentId");
-            }
             mark.setStudentId(personService.readPersonById(studentId));
             marksRepository.save(mark);
         }
         if (subjectId != null) {
-            if (!isSubjectValid(subjectId)) {
-                throw new IllegalArgumentException("Invalid mark subjectId");
-            }
             mark.setSubjectId(subjectService.readSubjectById(subjectId));
             marksRepository.save(mark);
         }
         if (teacherId != null) {
-            if (!isTeacherValid(teacherId)) {
-                throw new IllegalArgumentException("Invalid mark teacherId");
-            }
             mark.setTeacherId(personService.readPersonById(teacherId));
             marksRepository.save(mark);
         }
         if (value != null) {
-            if (isValueInvalid(value)) {
-                throw new IllegalArgumentException("Invalid mark value");
-            }
             mark.setValue(value);
             marksRepository.save(mark);
         }
-    }
-
-    private boolean isValueInvalid(Integer value) {
-        return value <= 1 || value >= 6;
-    }
-    private boolean isStudentInvalid(Long studentId) throws IllegalArgumentException {
-        Person person = personService.readPersonById(studentId);
-        return person.getType() != 'S';
-    }
-    private boolean isSubjectValid(Long subjectId) throws IllegalArgumentException {
-        subjectService.readSubjectById(subjectId);
-        return true;
-    }
-    private boolean isTeacherValid(Long teacherId) throws IllegalArgumentException {
-        Person person = personService.readPersonById(teacherId);
-        return person.getType() == 'P';
     }
 }

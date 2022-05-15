@@ -1,9 +1,9 @@
 package com.deanery.web.view;
 
-import com.deanery.entity.Subject;
+import com.deanery.entity.Group;
 import com.deanery.security.jwt.JwtTokenProvider;
-import com.deanery.service.SubjectService;
-import com.deanery.web.component.SubjectEditor;
+import com.deanery.service.GroupService;
+import com.deanery.web.component.GroupEditor;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -15,70 +15,73 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collections;
 
-@Route("/client/subjects")
-public class SubjectView extends VerticalLayout {
+@Route("/client/groups")
+public class GroupView extends VerticalLayout {
 
-    private final SubjectService subjectService;
+    private final GroupService groupService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final Grid<Subject> grid = new Grid<>(Subject.class);
+    private final Grid<Group> grid = new Grid<>(Group.class);
     private final TextField filter = new TextField("", "Type to filter...");
     private final TextField utility = new TextField("", "Utility field...");
     private final TextField token = new TextField("", "Type your token...");
     private final Button addNewBtn = new Button("Add new");
     private final Button deleteAllBtn = new Button("Delete all");
-    private final Button byTeacherBtn = new Button("By teacherId");
+    private final Button deleteStartsWithBtn = new Button("Delete starts with");
     private final HorizontalLayout toolbar =
-            new HorizontalLayout(filter, utility, token, addNewBtn, deleteAllBtn, byTeacherBtn);
-    private final SubjectEditor editor;
+            new HorizontalLayout(filter, utility, token, addNewBtn, deleteAllBtn, deleteStartsWithBtn);
+    private final GroupEditor editor;
 
     @Autowired
-    public SubjectView(SubjectService subjectService, SubjectEditor editor, JwtTokenProvider jwtTokenProvider) {
-        this.subjectService = subjectService;
+    public GroupView(GroupService GroupService, GroupEditor editor, JwtTokenProvider jwtTokenProvider) {
+        this.groupService = GroupService;
         this.editor = editor;
         this.jwtTokenProvider = jwtTokenProvider;
 
         filter.setValueChangeMode(ValueChangeMode.EAGER);
-        filter.addValueChangeListener(e -> showSubject(e.getValue()));
+        filter.addValueChangeListener(e -> showGroup(e.getValue()));
 
         add(toolbar, grid, editor);
 
         grid.asSingleSelect().addValueChangeListener(e -> {
             if (jwtTokenProvider.checkToken(token.getValue())) {
-                editor.editSubject(e.getValue());
+                editor.editGroup(e.getValue());
             }
         });
 
         addNewBtn.addClickListener(e -> {
             if (jwtTokenProvider.checkToken(token.getValue())) {
-                editor.editSubject(new Subject());
+                editor.editGroup(new Group());
             }
-        });
-        byTeacherBtn.addClickListener(e -> {
-            grid.setItems(subjectService.readSubjectsByTeacher(Long.parseLong(utility.getValue())));
         });
         deleteAllBtn.addClickListener(e -> {
             if (jwtTokenProvider.checkToken(token.getValue())) {
-                subjectService.deleteAllSubjects();
-                grid.setItems(subjectService.readSubjects());
+                groupService.deleteAllGroups();
+                grid.setItems(Collections.emptyList());
+            }
+        });
+        deleteStartsWithBtn.addClickListener(e -> {
+            if (jwtTokenProvider.checkToken(token.getValue())) {
+                groupService.deleteGroupsStartsWith(utility.getValue());
+                grid.setItems(groupService.readGroups());
             }
         });
 
         editor.setChangeHandler(() -> {
             editor.setVisible(false);
-            showSubject(filter.getValue());
+            showGroup(filter.getValue());
         });
 
 
-        showSubject("");
+        showGroup("");
     }
 
-    private void showSubject(String name) {
+    private void showGroup(String name) {
         if (name.isEmpty()) {
-            grid.setItems(subjectService.readSubjects());
+            grid.setItems(groupService.readGroups());
         } else {
             try {
-                grid.setItems(subjectService.readSubjectsStartsWith(name));
+                grid.setItems(groupService.readGroupsStartsWith(name));
             } catch (IllegalStateException e) {
                 grid.setItems(Collections.emptyList());
             }

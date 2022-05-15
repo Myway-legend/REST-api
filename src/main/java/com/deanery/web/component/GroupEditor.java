@@ -1,15 +1,12 @@
 package com.deanery.web.component;
 
-import com.deanery.entity.Subject;
-import com.deanery.repository.SubjectsRepository;
-import com.deanery.security.jwt.JwtTokenProvider;
-import com.deanery.service.SubjectService;
+import com.deanery.entity.Group;
+import com.deanery.repository.GroupsRepository;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
@@ -19,13 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @SpringComponent
 @UIScope
-public class SubjectEditor extends VerticalLayout implements KeyNotifier {
+public class GroupEditor extends VerticalLayout implements KeyNotifier {
 
-    private final SubjectsRepository subjectsRepository;
+    private final GroupsRepository groupsRepository;
+    private Group group;
 
-    private Subject subject;
-
-    Binder<Subject> binder = new Binder<>(Subject.class);
+    Binder<Group> binder = new Binder<>(Group.class);
     TextField name = new TextField("Name");
     Button save = new Button("Save");
     Button delete = new Button("Delete");
@@ -33,15 +29,15 @@ public class SubjectEditor extends VerticalLayout implements KeyNotifier {
     HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
 
     @Setter
-    private ChangeHandler changeHandler;
+    private GroupEditor.ChangeHandler changeHandler;
 
     public interface ChangeHandler {
         void onChange();
     }
 
     @Autowired
-    public SubjectEditor(SubjectsRepository subjectsRepository) {
-        this.subjectsRepository = subjectsRepository;
+    public GroupEditor(GroupsRepository groupsRepository) {
+        this.groupsRepository = groupsRepository;
         add(name, actions);
         binder.bindInstanceFields(this);
         setSpacing(true);
@@ -58,33 +54,33 @@ public class SubjectEditor extends VerticalLayout implements KeyNotifier {
     }
 
     private void delete() {
-        subjectsRepository.delete(subject);
+        groupsRepository.delete(group);
         changeHandler.onChange();
     }
 
     private void save() {
-        if (isNameValid(subject.getName())) {
-            subjectsRepository.save(subject);
+        if (isNameValid(group.getName())) {
+            groupsRepository.save(group);
         }
         changeHandler.onChange();
     }
 
-    public void editSubject(Subject subject) {
-        if (subject == null) {
+    public void editGroup(Group Group) {
+        if (Group == null) {
             setVisible(false);
             return;
         }
 
-        if (subject.getId() != null) {
-            this.subject = subjectsRepository.findById(subject.getId()).orElse(subject);
+        if (Group.getId() != null) {
+            this.group = groupsRepository.findById(group.getId()).orElse(group);
         } else {
-            this.subject = subject;
+            this.group = Group;
         }
-        binder.setBean(this.subject);
+        binder.setBean(this.group);
         setVisible(true);
     }
 
-    private boolean isNameValid(String name) {
-        return name.matches("[A-Z][a-z]{0,49}");
+    static boolean isNameValid(String name) {
+        return name.matches("\\d{7}/\\d{5}");
     }
 }

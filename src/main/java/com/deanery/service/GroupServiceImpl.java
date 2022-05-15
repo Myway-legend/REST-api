@@ -41,12 +41,16 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
-    public void createGroup(String name) throws IllegalStateException, IllegalArgumentException {
+    public Group readGroupByName(String name) throws IllegalStateException {
+        return groupsRepository.findByName(name).orElseThrow(
+                () -> new IllegalStateException("Invalid group name")
+        );
+    }
+
+    @Override
+    public void createGroup(String name) throws IllegalStateException {
         if (groupsRepository.existsByName(name)) {
             throw new IllegalStateException("Group already exists");
-        }
-        if (isNameInvalid(name)) {
-            throw new IllegalArgumentException("Invalid group name");
         }
         groupsRepository.save(new Group(name));
     }
@@ -68,18 +72,11 @@ public class GroupServiceImpl implements GroupService{
     }
 
     @Override
-    public void updateGroupById(Long id, String newName) throws IllegalStateException, IllegalArgumentException {
+    public void updateGroupById(Long id, String newName) throws IllegalStateException {
         if (groupsRepository.existsByName(newName)) {
             throw new IllegalStateException("Group already exists");
         }
-        if (isNameInvalid(newName)) {
-            throw new IllegalArgumentException("Invalid group name");
-        }
         groupsRepository.updateNameById(id, newName);
-    }
-
-    static boolean isNameInvalid(String name) {
-        return !name.matches("\\d{7}/\\d{5}");
     }
 
 }

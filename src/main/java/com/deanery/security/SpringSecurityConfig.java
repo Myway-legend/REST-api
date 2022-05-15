@@ -2,6 +2,8 @@ package com.deanery.security;
 
 import com.deanery.security.jwt.JwtSecurityConfigurer;
 import com.deanery.security.jwt.JwtTokenProvider;
+import com.deanery.web.view.LoginView;
+import com.vaadin.flow.spring.security.VaadinWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,17 +35,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic().disable()
                 .csrf().disable()
-                .formLogin().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/deanery-api/auth/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/deanery-api/data/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/deanery-api/data/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.PUT, "/deanery-api/data/**").hasRole("ADMIN")
                 .antMatchers(HttpMethod.DELETE, "/deanery-api/data/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .apply(new JwtSecurityConfigurer(jwtTokenProvider));
     }

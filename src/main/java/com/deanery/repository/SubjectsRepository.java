@@ -20,7 +20,7 @@ public interface SubjectsRepository extends CrudRepository<Subject, Long> {
     @Query("SELECT s FROM SUBJECTS s WHERE s.name LIKE CONCAT(?1, '%')")
     List<Subject> findByNameStartsWith(String prefix);
 
-    @Query("SELECT s FROM SUBJECTS s INNER JOIN MARKS m ON m.subjectId.id = s.id WHERE m.teacherId.id = ?1")
+    @Query("SELECT DISTINCT s FROM SUBJECTS s INNER JOIN MARKS m ON m.subjectId.id = s.id WHERE m.teacherId.id = ?1")
     List<Subject> findByTeacher(Long teacherId);
 
     @Query("SELECT s FROM SUBJECTS s ORDER BY s.name")

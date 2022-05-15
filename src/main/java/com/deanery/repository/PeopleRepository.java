@@ -8,13 +8,20 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PeopleRepository extends CrudRepository<Person, Long> {
 
-    @Query("SELECT p FROM PEOPLE p WHERE p.type = P")
+    Optional<Person> findByFirstNameAndLastNameAndPatherNameAndGroupIdAndType(String firstName, String lastName,
+                                                                              String patherName, Group groupId,
+                                                                              String type);
+    @Query("SELECT p FROM PEOPLE p WHERE p.lastName LIKE CONCAT(?1, '%')")
+    List<Person> findByLastNameStartsWith(String prefix);
+
+    @Query("SELECT p FROM PEOPLE p WHERE p.type = 'P'")
     List<Person> findTeachers();
 
-    @Query("SELECT p FROM PEOPLE p WHERE p.type = S")
+    @Query("SELECT p FROM PEOPLE p WHERE p.type = 'S'")
     List<Person> findStudents();
 
     @Query("SELECT DISTINCT p FROM PEOPLE p INNER JOIN MARKS m ON m.studentId.id = p.id AND m.subjectId.id = ?1")
@@ -23,7 +30,7 @@ public interface PeopleRepository extends CrudRepository<Person, Long> {
     @Query("SELECT DISTINCT p FROM PEOPLE p INNER JOIN MARKS m ON m.teacherId.id = p.id AND m.subjectId.id = ?1")
     List<Person> findTeachersBySubject(Long subjectId);
 
-    @Query("SELECT DISTINCT p FROM PEOPLE p INNER JOIN MARKS m ON m.studentId.id = p.id WHERE m.value = 2")
+    @Query("SELECT DISTINCT p FROM PEOPLE p INNER JOIN MARKS m ON m.studentId.id = p.id WHERE m.value = '2'")
     List<Person> findAdditionalSessionStudents();
 
     @Query("SELECT DISTINCT p FROM PEOPLE p INNER JOIN MARKS m ON m.studentId.id = p.id WHERE m.teacherId.id = ?1")

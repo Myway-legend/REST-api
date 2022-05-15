@@ -40,7 +40,7 @@ public class SubjectServiceImpl implements SubjectService {
     @Override
     public List<Subject> readSubjectsByTeacher(Long teacherId) throws IllegalStateException {
         Person teacher = personService.readPersonById(teacherId);
-        if (teacher.getType() == 'S') {
+        if (teacher.getType().equals("S")) {
             throw new IllegalStateException("Invalid teacherId");
         }
         return subjectsRepository.findByTeacher(teacherId);
@@ -60,12 +60,9 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
-    public void createSubject(String name) throws IllegalStateException, IllegalArgumentException {
+    public void createSubject(String name) throws IllegalStateException {
         if (subjectsRepository.existsByName(name)) {
             throw new IllegalStateException("Subject already exists");
-        }
-        if (isNameInvalid(name)) {
-            throw new IllegalArgumentException("Invalid subject name");
         }
         subjectsRepository.save(new Subject(name));
     }
@@ -83,16 +80,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public void updateSubjectById(Long id, String newName) throws IllegalStateException, IllegalArgumentException {
-        if (subjectsRepository.existsByName(newName)) {
-            throw new IllegalStateException("Subject already exists");
-        }
-        if (isNameInvalid(newName)) {
-            throw new IllegalArgumentException("Invalid subject name");
+        if (subjectsRepository.existsByName(newName) || id == null) {
+            throw new IllegalStateException("Subject already exists or invalid ID");
         }
         subjectsRepository.updateNameById(id, newName);
-    }
-
-    private boolean isNameInvalid(String name) {
-        return !name.matches("[A-Z][a-z]{0,49}");
     }
 }
