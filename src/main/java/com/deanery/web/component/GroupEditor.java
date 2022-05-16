@@ -2,6 +2,7 @@ package com.deanery.web.component;
 
 import com.deanery.entity.Group;
 import com.deanery.repository.GroupsRepository;
+import com.deanery.web.InvalidDataNotification;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -61,20 +62,22 @@ public class GroupEditor extends VerticalLayout implements KeyNotifier {
     private void save() {
         if (isNameValid(group.getName())) {
             groupsRepository.save(group);
+        } else {
+            InvalidDataNotification.showError("Invalid name");
         }
         changeHandler.onChange();
     }
 
-    public void editGroup(Group Group) {
-        if (Group == null) {
+    public void editGroup(Group group) {
+        if (group == null) {
             setVisible(false);
             return;
         }
 
-        if (Group.getId() != null) {
+        if (group.getId() != null) {
             this.group = groupsRepository.findById(group.getId()).orElse(group);
         } else {
-            this.group = Group;
+            this.group = group;
         }
         binder.setBean(this.group);
         setVisible(true);

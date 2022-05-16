@@ -4,6 +4,7 @@ package com.deanery.web.component;
 import com.deanery.entity.Person;
 import com.deanery.repository.PeopleRepository;
 import com.deanery.service.GroupService;
+import com.deanery.web.InvalidDataNotification;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -73,6 +74,8 @@ public class PersonEditor extends VerticalLayout implements KeyNotifier {
         }
         if (isPersonValid(person)) {
             peopleRepository.save(person);
+        } else {
+            InvalidDataNotification.showError("Invalid data");
         }
         changeHandler.onChange();
     }
@@ -107,7 +110,7 @@ public class PersonEditor extends VerticalLayout implements KeyNotifier {
     }
 
     private boolean isGroupValid(Person person) {
-        if (person.getType().equals("S")) {
+        if (person.getType().equals("S") && person.getGroupId() != null) {
             return groupService.readGroupById(person.getGroupId().getId()) != null;
         } else if (person.getType().equals("P")) {
             return person.getGroupId() == null;

@@ -5,6 +5,7 @@ import com.deanery.entity.Person;
 import com.deanery.repository.MarksRepository;
 import com.deanery.service.PersonService;
 import com.deanery.service.SubjectService;
+import com.deanery.web.InvalidDataNotification;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -82,6 +83,8 @@ public class MarkEditor extends VerticalLayout implements KeyNotifier {
 
         if (isMarkValid(mark)) {
             marksRepository.save(mark);
+        } else {
+            InvalidDataNotification.showError("Invalid data");
         }
         changeHandler.onChange();
     }

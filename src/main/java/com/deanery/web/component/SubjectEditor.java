@@ -4,6 +4,7 @@ import com.deanery.entity.Subject;
 import com.deanery.repository.SubjectsRepository;
 import com.deanery.security.jwt.JwtTokenProvider;
 import com.deanery.service.SubjectService;
+import com.deanery.web.InvalidDataNotification;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -65,6 +66,8 @@ public class SubjectEditor extends VerticalLayout implements KeyNotifier {
     private void save() {
         if (isNameValid(subject.getName())) {
             subjectsRepository.save(subject);
+        } else {
+            InvalidDataNotification.showError("Invalid name");
         }
         changeHandler.onChange();
     }
